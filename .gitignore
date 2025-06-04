@@ -1,0 +1,34 @@
+# Python related
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+*.manifest
+*.spec
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Python packaging
+build/
+dist/
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Environment files
+*.env
+
+# Docker related
+*.tar
+**/docker-compose*.override.yml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
