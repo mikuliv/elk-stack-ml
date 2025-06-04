@@ -40,7 +40,7 @@ services:
     networks:
       - elknet
     extra_hosts:
-      - "ml-api:192.168.2.141"  # если ml-api не в той же сети
+      - "ml-api:192.168.2.141"  # required only if ml-api runs outside this Docker network
 
   ml-api:
     build:
