@@ -34,3 +34,22 @@ def test_predict_endpoint():
     data = response.json()
     assert 'predicted_class' in data
     assert 'class_name' in data
+
+
+def test_missing_log_returns_422():
+    response = client.post('/predict', json={})
+    assert response.status_code == 422
+
+
+def test_numeric_string_coerced():
+    response = client.post('/predict', json={'log': {'Dst Port': '80'}})
+    assert response.status_code == 200
+    data = response.json()
+    assert 'predicted_class' in data
+
+
+def test_invalid_numeric_value_returns_error():
+    response = client.post('/predict', json={'log': {'Dst Port': 'abc'}})
+    assert response.status_code == 200
+    data = response.json()
+    assert 'error' in data
