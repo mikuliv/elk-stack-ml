@@ -34,3 +34,16 @@ def test_predict_endpoint():
     data = response.json()
     assert 'predicted_class' in data
     assert 'class_name' in data
+
+
+def test_predict_endpoint_error():
+    def raise_error(*args, **kwargs):
+        raise RuntimeError("fail")
+
+    mock_session.run.side_effect = raise_error
+    response = client.post('/predict', json={'log': {}})
+    assert response.status_code != 200
+    assert response.status_code == 500
+    data = response.json()
+    assert data.get('detail') == 'fail'
+    mock_session.run.side_effect = None

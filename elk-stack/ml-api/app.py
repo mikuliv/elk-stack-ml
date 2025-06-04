@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import onnxruntime as ort
 import numpy as np
@@ -49,4 +49,4 @@ async def predict(log_entry: LogEntry):
             "class_name": str(classes[predicted_class])
         }
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
