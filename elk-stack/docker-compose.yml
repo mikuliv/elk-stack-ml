@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - node.name=es-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    networks:
+      - elknet
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - elknet
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:${ELK_VERSION}
+    container_name: logstash
+    ports:
+      - "5044:5044"  # <--- переместил внутрь logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
+      - ml-api           # <--- чтобы logstash знал про ml-api
+    networks:
+      - elknet
+    extra_hosts:
+      - "ml-api:192.168.2.141"  # если ml-api не в той же сети
+
+  ml-api:
+    build:
+      context: ./ml-api
+    container_name: ml-api
+    ports:
+      - "8000:8000"
+    networks:
+      - elknet
+
+volumes:
+  es-data:
+
+networks:
+  elknet:
